@@ -7,121 +7,144 @@ from selenium.webdriver.common.by import By
 import time
 import pandas as pd
 
-# user define function
-# Scrape the data
-# and get in string
-def getdata(url):
-    r = requests.get(url)
-    return r.text
+class IndeedScraper:
 
+    def __init__(self,imported_data=None):
+        # specify self.driver path
+        DRIVER_PATH = '\dev\projects\data-science-skills\chromedriver_win32_99\chromedriver'
+        self.driver = webdriver.Chrome(executable_path=DRIVER_PATH)
+        if imported_data is None:
+            self.df_jobs = pd.DataFrame()
+        else:
+            self.df_jobs = imported_data
 
-# filter job data using
-# find_all function
-def job_data(soup):
-    # find the Html tag
-    # with find()
-    # and convert into string
-    data_str = ""
-    soup.find_all("div", id="jobDescriptionText")
-    for item in soup.find_all("div", class_="job_seen_beacon"):
-        data_str = data_str + item.get_text()
-    result_1 = data_str.split("\n")
-    return (result_1)
+    def __enter__(self):
+        return self
 
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        self.save_data("raw.txt")
+        print("Crashed")
 
-# filter company_data using
-# find_all function
+    def get_jobs(self,all_these_words,none_these_words=None,sort="relevance",location="Chicago,+IL",explvl="entry_level",limit=50,
+                 fromage=None,educ="bachelor_degree"):
+        url = "https://www.indeed.com/jobs?"
+        url += f"q={'+'.join(all_these_words)}"
+        url += f"&sort={sort}"
+        if none_these_words is not None:
+            url += f"+-{',+-'.join(none_these_words)}"
+        if location is not None:
+            url += f"&l={location}"
+        if explvl is not None:
+            url += f"&explvl={explvl}"
+        if limit is not None:
+            url += f"&limit={limit}"
+        if fromage is not None:
+            url += f"&fromage={fromage}"
+        if educ is not None:
+            url += f"&education={educ}"
 
+        # For each page
+        for i in range(20, 100):
+            self.driver.get(url + f"&start={i*limit}")
+            self.driver.implicitly_wait(1)
 
-def company_data(soup):
-    # find the Html tag
-    # with find()
-    # and convert into string
-    data_str = ""
-    result = ""
-    for item in soup.find_all("div", class_="sjcl"):
-        data_str = data_str + item.get_text()
-    result_1 = data_str.split("\n")
-
-    res = []
-    for i in range(1, len(result_1)):
-        if len(result_1[i]) > 1:
-            res.append(result_1[i])
-    return (res)
-
-def get_jobs(all_these_words,none_these_words,location="Chicago,+IL",explvl="entry_level",limit=50,fromage=15):
-    url = "https://www.indeed.com/jobs?"
-    url += f"q={'+'.join(all_these_words)}"
-    url += f"+-{',+-'.join(none_these_words)}"
-    url += f"&l={location}"
-    url += f"&explvl={explvl}"
-    url += f"&limit={limit}"
-    url += f"&fromage={fromage}"
-
-    # specify driver path
-    DRIVER_PATH = '\dev\projects\data-science-skills\chromedriver_win32_99\chromedriver'
-    driver = webdriver.Chrome(executable_path=DRIVER_PATH)
-    driver.get(url)
-    driver.implicitly_wait(3)
-
-    df_jobs = pd.DataFrame()
-
-    # For each page
-    for i in range(0, 1):
-
-        job_card = driver.find_elements(by=By.XPATH, value='//a[contains(@class,"tapItem")]')
-
-        for job in job_card:
-            job_dict = {}
-            job_dict["title"] = job.find_elements(by=By.XPATH, value='.//h2[contains(@class,"jobTitle")]//span')[-1].get_attribute(name="title")
-            job_dict["company"] = job.find_element(by=By.XPATH, value='.//span[@class="companyName"]').text
-            job_dict["link"] = job.get_attribute(name="href")
-
+            # Ensure we turned the page
             try:
-                job_dict["salary"] = job.find_elements(by=By.XPATH, value='.//div[contains(@class,"salary")]//div')[0]
+                # Ensure we turned the page
+                page_num = self.driver.find_element(by=By.XPATH, value='//b[contains(@aria-current,"true")]').text
+                # Close popup
+                while page_num == "":
+                    self.driver.implicitly_wait(1)
+                    self.driver.find_element(by=By.XPATH,
+                                             value='//button[contains(@class,"popover-x-button-close")]').click()
+                    page_num = self.driver.find_element(by=By.XPATH, value='//b[contains(@aria-current,"true")]').text
+                assert page_num == str(i + 1)
+            except:
+                break
+            print("Page: {}".format(str(i + 1)))
+
+            job_card = self.driver.find_elements(by=By.XPATH, value='//a[contains(@class,"tapItem")]')
+
+            for job in job_card:
+                job_dict = {}
+                job_dict["title"] = job.find_elements(by=By.XPATH, value='.//h2[contains(@class,"jobTitle")]//span')[-1].get_attribute(name="title")
+                job_dict["company"] = job.find_element(by=By.XPATH, value='.//span[@class="companyName"]').text
+                job_dict["link"] = job.get_attribute(name="href")
+
+                try:
+                    job_dict["salary"] = job.find_elements(by=By.XPATH, value='.//div[contains(@class,"salary")]//div')[0]
+                except:
+                    pass
+
+                try:
+                    job_dict["location"] = job.find_element(by=By.XPATH, value='.//div[contains(@class,"companyLocation")]').text
+                except:
+                    pass
+
+                # Job desc and rating
+                job.click()
+                job_preview = self.driver.find_element(by=By.XPATH, value='//iframe[contains(@id,"vjs-container-iframe")]')
+                self.driver.switch_to.frame(job_preview)
+                jd = self.driver.find_element(by=By.XPATH, value='//div[@id="jobDescriptionText"]').text
+                job_dict["desc"] = jd.replace("}", "{")
+                try:
+                    job_dict["rating_value"] = self.driver.find_element(by=By.XPATH,
+                                                                                   value='.//meta[contains(@itemprop,"ratingValue")]').get_attribute(
+                        "content")
+                    job_dict["rating_count"] = self.driver.find_element(by=By.XPATH,
+                                                                                   value='.//meta[contains(@itemprop,"ratingCount")]').get_attribute(
+                        "content")
+                except:
+                    pass
+                self.driver.switch_to.default_content()
+
+                job_dict = pd.DataFrame([job_dict])
+                self.df_jobs = pd.concat([self.df_jobs, job_dict], ignore_index=True)
+            self.save_data("raw.txt")
+
+    def get_desc_and_ratings(self):
+        if "desc" not in self.df_jobs.columns:
+            self.df_jobs["desc"] = np.nan
+        jobs_to_get = self.df_jobs.index[self.df_jobs["desc"].isna()]
+        max_jobs = 500
+        print(f"{len(jobs_to_get)} jobs without descriptions out of {len(self.df_jobs)}")
+        for i in jobs_to_get[:max_jobs]:
+            link = self.df_jobs.loc[i, "link"]
+            self.driver.get(link)
+            self.driver.implicitly_wait(1)
+
+            jd = self.driver.find_element(by=By.XPATH, value='//div[@id="jobDescriptionText"]').text
+            self.df_jobs.loc[i, "desc"] = jd.replace("}", "{")
+    
+            try:
+                self.df_jobs.loc[i, "rating_value"] = self.driver.find_element(by=By.XPATH,
+                                                                     value='.//meta[contains(@itemprop,"ratingValue")]').get_attribute(
+                    "content")
+                self.df_jobs.loc[i, "rating_count"] = self.driver.find_element(by=By.XPATH,
+                                                                     value='.//meta[contains(@itemprop,"ratingCount")]').get_attribute(
+                    "content")
             except:
                 pass
+    
+        return self.df_jobs
 
-            try:
-                job_dict["location"] = job.find_element(by=By.XPATH, value='.//div[contains(@class,"companyLocation")]').text
-            except:
-                pass
-
-            job_dict = pd.DataFrame([job_dict])
-            df_jobs = pd.concat([df_jobs, job_dict], ignore_index=True)
-
-        try:
-            next_page = driver.find_element(by=By.XPATH, value='//span[@class="np"]')
-            next_page.click()
-        except:
-            break # We got to last page
-        print("Page: {}".format(str(i + 2)))
-
-    # Now go through and get descriptions and reviews
-
-    for i in range(len(df_jobs)):
-        link = df_jobs.loc[i,"link"]
-        driver.get(link)
-        jd = driver.find_element(by=By.XPATH, value='//div[@id="jobDescriptionText"]').text
-        df_jobs.loc[i,"desc"] = jd
-
-
-        try:
-            df_jobs.loc[i,"rating_value"] = driver.find_element(by=By.XPATH, value='.//meta[contains(@itemprop,"ratingValue")]').get_attribute("content")
-            df_jobs.loc[i,"rating_count"] = driver.find_element(by=By.XPATH, value='.//meta[contains(@itemprop,"ratingCount")]').get_attribute("content")
-        except:
-            pass
-
-    return df_jobs
-
+    def save_data(self,path="raw.txt"):
+        self.df_jobs["location"] = self.df_jobs["location"].fillna("none")
+        df_new = self.df_jobs.drop_duplicates(subset=["company","title","location"], keep="first")
+        df_new.to_csv(path, sep="}",index=False)
+        print(f"Data Saved.")
+        print(f"Encountered {len(self.df_jobs) - len(df_new)} duplicates.")
+        print(f"Now Have {len(df_new)} Total Jobs.")
 
 
 if __name__ == "__main__":
     all_these_words = ["python", "data"]
-    none_these_words = ["Doctor", "PHD","PH.D", "masters", "Master", "Ph.D.", "Doctorate", "MS", "PhD"]
 
-    df_jobs = get_jobs(all_these_words,none_these_words)
-    df_jobs.to_csv("raw.colan",sep="}")
-    # pd.read_csv("raw.colan", sep="}")
-
-
+    df_jobs = pd.read_csv("raw.txt", sep="}")
+    with IndeedScraper(imported_data=df_jobs) as scrapper:
+        try:
+            scrapper.get_jobs(all_these_words, location=None)
+            # scrapper.get_desc_and_ratings()
+            scrapper.save_data()
+        except:
+            pass
