@@ -131,6 +131,7 @@ class IndeedScraper:
     def save_data(self,path="raw.txt"):
         self.df_jobs["location"] = self.df_jobs["location"].fillna("none")
         df_new = self.df_jobs.drop_duplicates(subset=["company","title","location"], keep="first")
+        df_new = df_new.fillna("")
         df_new.to_csv(path, sep="}",index=False)
         print(f"Data Saved.")
         print(f"Encountered {len(self.df_jobs) - len(df_new)} duplicates.")
@@ -143,7 +144,7 @@ if __name__ == "__main__":
     df_jobs = pd.read_csv("raw.txt", sep="}")
     with IndeedScraper(imported_data=df_jobs) as scrapper:
         try:
-            scrapper.get_jobs(all_these_words, location=None)
+            # scrapper.get_jobs(all_these_words, location=None)
             # scrapper.get_desc_and_ratings()
             scrapper.save_data()
         except:
