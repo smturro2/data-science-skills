@@ -1,0 +1,82 @@
+SCOTT TURRO
+708-308-6203  turroscott@gmail.com Personal Website LinkedIn
+EDUCATION
+University of Illinois at Urbana-Champaign Expected Graduation: May 2022
+Bachelor of Science in Statistics, Minor in Mathematics, Physics, and Computer Science GPA: 3.7/4.0
+PROFESSIONAL EXPERIENCE
+Magnetar Capital Evanston, IL
+Part-Time Analyst March 2021 – March 2022
+• Mapped out, streamlined, and ported two financial models from Excel into Python utilizing NumPy
+• Models involved future returns on Collateralized Debt Obligations (CDO) and liquidity projections for firms
+• Maintained and visually enhanced an excel dashboard which displays details of CDO portfolios
+• Streamlined the process of collecting the data from external and internal SQL databases using Pandas
+• Managed the environment using Pipenv and aided non-technical team members with updates and issues
+• Communicated with an external team to retrieve the future cash flow of Magnetar Capital
+Kwiat Research Group Urbana, IL
+Undergraduate Researcher November 2018 – August 2021
+• Independently redesigned Python process into a documented library that uses MLE to analyze lab data
+• Published the library on PyPI, providing over a thousand Python developers access to the code
+• Ensured production-ready code by using Github actions for testing and Gitflow for version control
+• Designed and implemented testing simulations to make sure experimental errors were accurately accounted
+• Utilized Monte Carlo Simulations to offer error estimates on the outputs
+• Envisioned and purposed a new Flask website which utilizes the code in online apps and explains the algorithm
+• Introduced a new member to the project and directed the development of the documentation site built on Flask
+• Investigated the pros/cons of Bayesian methods with a doctoral student to improve the algorithm
+• Self-taught quantum mechanics through past members’ dissertations and online research
+Qubitekk, Inc Remote
+Research and Development Intern May 2021 – August 2021
+• Implemented a mathematic algorithm and caught a fundamental flaw in the algorithm before production
+• Improved the automated process of analyzing a laser by using 3% of the measurements needed before
+• Purposed new strategies to the physics team to analyze the performance of optical systems in a more efficient way
+• Presented version control strategies using PowerPoint to aid in the company’s transition to a new platform
+• Shared knowledge on a variety of topics with my mentor weekly to broaden both of our areas of expertise
+• Searched for inefficiencies in optical systems by visualizing performance using R and Python
+COMPETITIONS & AWARDS
+Q-Munity Hack-Q-Thon - 1
+st Place Individual Spring 2021
+• Designed and presented an interface to input the components of financial portfolios
+• Used quantum optimization techniques from Qiskit to perform portfolio optimization
+JP Morgan’s Code for Good Hackathon – 1
+st Team Place Team Fall 2020
+• Coordinated with random members to protype a social media platform for a non-profit organization
+• Increased engagement and collaboration between participants and organizers of Girls in the Game
+• Built the website in Flask and stored the data on Google Cloud using Firebase
+US Congressional App Contest – 1
+st Place Individual Spring 2018
+• Programmed a Java app to simulate a Waterful Ring Toss game on the iPhone using a custom physics engine
+• Demonstrated the incorporation of hydrodynamic drag and gyroscope sensing to congressman on Capitol Hill
+BPA Fundamentals of SQL– 2nd Place Individual Spring 2018
+• Statewide competition which tested SQL skills through a written exam
+IHSA Men’s Gymnastics State Competition – 2nd Place Team Spring 2018
+• Lead warmups everyday as team captain and worked with an editor to create a hype video for the state meet
+SKILLS
+Data Science: Optimization || Deep Learning || Regression || Clustering || Data Wrangling & Visualization
+Non-Technical: Communication || Creativity || Problem Solving || Collaboration || Strategic Planning
+COURSEWORK
+Honors Individual Study Fall 2021
+• Utilized MCMC and latent class variables to cluster students based on their test performance
+• Programmed Monte Carlo Simulations to analyze the accuracy of the python algorithm
+• Used the algorithm to analyze several datasets and presented the findings to students and professors in a team
+Unsupervised Learning Fall 2021
+• Performed cluster analysis on NBA players to showcase 2 different playing styles and 3 different levels of skill
+• Analyzed the makeup of different teams and made suggestions for what types of players to pick up in the draft
+Fundamentals of Deep Learning Fall 2021
+• Determined if a chest x-rays exhibited covid-19 using convolutional neural networks with an accuracy of over 90%
+Statistics Programming Methods Spring 2021
+• Created an R shiny app with 4 other students which visualizes data on loans given out to Small Businesses
+• Presented the impact of location, the recession, and job retention on the loans’ default rate
+INDEPENDENT PROJECTS
+Indeed Job Posting Analysis Spring 2022
+• Web scraped over 1,000 Python/data related job postings to find out what skills employers are looking for
+• Stored the data in an AWS Dynamo DB database for efficient storage and ability to expand in the future
+• Created a dashboard in Power Bi to display what languages and experiences to showcase in my resume
+Stock Market Data Spring 2021
+• Designed a personal database to store daily stock prices and automatically retrieved missing data using an API
+• Stored the data as it was retrieved in a private database on cPanel so the API is not used in future queries
+Task Manager Fall 2019
+• Developed a site that displays assignments for the week to better my organizational problems from freshman year
+• Originally hosted the site on a Raspberry Pi and moved to cPanel to provide remote access
+• Utilized this site throughout college and say my semester GPAs improve from low 3’s to consistently above 3.8
+INTERESTS
+Business: Statistical Analysis || Technical Solutions || Presentation || System Design || Operational Research
+Personal: Yoga || Quantum Computing || F1 Racing || Esports || Gardenin
